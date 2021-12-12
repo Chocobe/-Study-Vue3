@@ -1,30 +1,34 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <div class="name">{{ name }}</div>
+  <div class="user">{{ user }}</div>
 </template>
 
+<script>
+import { ref, reactive } from "vue";
+
+export default {
+  setup() {
+    const name = ref("초코비");
+
+    const user = reactive({
+      id: 0,
+      name: "Chocobe",
+    });
+
+    return {
+      name,
+      user,
+    };
+  },
+};
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.name,
+.user {
+  margin-left: 50px;
+  color: #03a9f4;
+  font-size: 24px;
+  font-weight: 900;
 }
 </style>
