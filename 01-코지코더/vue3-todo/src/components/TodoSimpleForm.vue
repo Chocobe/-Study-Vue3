@@ -25,7 +25,9 @@
 import { ref } from "vue";
 
 export default {
-  setup(_props, context) {
+  emits: ["addTodo"],
+
+  setup(_props, { emit }) {
     const todo = ref("");
     const hasError = ref(false);
 
@@ -35,7 +37,7 @@ export default {
         return;
       }
 
-      context.emit("addTodo", {
+      emit("addTodo", {
         id: Date.now(),
         subject: todo.value,
         completed: false,

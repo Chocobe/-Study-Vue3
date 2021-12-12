@@ -260,10 +260,68 @@ export default {
 </script>
 ```
 
+<br/>
+
+그리고 ``Vue3`` 에서 추가된 속성인 ``emits`` 를 함께 등록 해주어야 합니다.
+
+``emits`` 속성은, 컴포넌트에서 발생시킬 ``이벤트명`` 을 ``string[]`` 으로 작성합니다.
+
+이렇게 작성한 코드는, 다음과 같습니다.
+
+```javascript
+export default {
+  emits: ["addTodo", "deleteTodo"],
+
+  setup(_props, context) {
+    const addTodo = todo => {
+      context.emit("addTodo", todo);
+    }
+
+    const deleteTodo = todo => {
+      context.emit("deleteTodo", todo);
+    }
+
+    return {
+      addTodo,
+      deleteTodo,
+    };
+  },
+};
+```
+
+<br/>
+
+위와 같이 ``emits`` 속성을 정의하면, 부모 컴포넌트에서 사용할 때, 자식 컴포넌트에서 발생되는 ``이벤트 목록`` 을 파악할 수 있게 됩니다.
+
 
 
 <br/><hr/><br/>
 
 
 
-## 07.
+## 07. ``Props``
+
+``Vue2`` 와 동일합니다.
+
+<br/>
+
+```html
+<script>
+export default {
+  props: {
+    myProp: {
+      type: Array,
+      default: () => [],
+    },
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 08. 

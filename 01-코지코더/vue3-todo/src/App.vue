@@ -6,32 +6,11 @@
 
     <div v-if="!todos.length">ToDo 를 입력해 주세요.</div>
 
-    <div v-for="(todo, idx) in todos" :key="idx" class="card mt-2">
-      <div class="card-body p-2 d-flex align-items-center">
-        <div class="form-check flex-grow-1">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            :id="todo.id"
-            v-model="todo.completed"
-          />
-
-          <label
-            class="form-check-label"
-            :class="{ todo_completed: todo.completed }"
-            :for="todo.id"
-          >
-            {{ todo.subject }}
-          </label>
-        </div>
-
-        <div>
-          <button class="btn btn-danger btn-sm" @click="() => deleteTodo(idx)">
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
+    <TodoList
+      :todos="todos"
+      @toggleTodo="toggleTodo"
+      @deleteTodo="deleteTodo"
+    />
   </div>
 </template>
 
@@ -39,6 +18,7 @@
 import { ref } from "vue";
 
 import TodoSimpleForm from "@/components/TodoSimpleForm.vue";
+import TodoList from "@/components/TodoList.vue";
 
 export default {
   setup() {
@@ -62,6 +42,12 @@ export default {
       todos.value.push(todo);
     };
 
+    const toggleTodo = idx => {
+      const targetTodo = todos.value[idx];
+      const { completed } = targetTodo;
+      targetTodo.completed = !completed;
+    };
+
     const deleteTodo = idx => {
       todos.value.splice(idx, 1);
     };
@@ -71,19 +57,16 @@ export default {
       todos,
       hasError,
       addTodo,
+      toggleTodo,
       deleteTodo,
     };
   },
 
   components: {
     TodoSimpleForm,
+    TodoList,
   },
 };
 </script>
 
-<style scoped lang="scss">
-.todo_completed {
-  color: #383841;
-  text-decoration: line-through;
-}
-</style>
+<style scoped lang="scss"></style>
