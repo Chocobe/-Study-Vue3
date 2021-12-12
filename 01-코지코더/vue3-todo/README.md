@@ -299,7 +299,7 @@ export default {
 
 
 
-## 07. ``Props``
+## 07. ``props``
 
 ``Vue2`` 와 동일합니다.
 
@@ -324,4 +324,30 @@ export default {
 
 
 
-## 08. 
+## 08. ``computed``
+
+``Vue3`` 의 ``computed`` 는 ``ref()`` 와 ``reactive()`` 처럼, ``vue`` 에서 제공하는 ``computed()`` 메서드로 생성할 수 있습니다.
+
+```javascript
+import { computed } from "vue";
+
+export default {
+  setup() {
+    const count = 0;
+    const doubleCount = computed(() => count * 2);
+
+    return {
+      count,
+      doubleCount,
+    };
+  },
+};
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 09. 
