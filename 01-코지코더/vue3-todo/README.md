@@ -226,4 +226,44 @@ export default {
 
 
 
-## 06. 
+## 06. 이벤트 발생 시키기 (``emit()``)
+
+``Vue2`` 에서는 ``this.$emit()`` 을 사용하여 컴포넌트의 이벤트를 발생 시킬 수 있었습니다.
+
+``composition-api`` 의 ``setup()`` 을 사용할 경우에는 ``this`` 가 아닌, ``setup()`` 으로 받게 되는 ``인자`` 를 통해서 이벤트를 발생 시킬 수 있습니다.
+
+<br/>
+
+``setup()`` 으로 받게되는 인자는 다음과 같습니다.
+
+``setup(props, context)``
+* ``props``: 부모 컴포넌트에서 받는 ``props``
+* ``context``: 이 컴포넌트의 ``context``
+
+``emit()`` 메서드는 ``context.emit()`` 을 통해 사용할 수 있습니다.
+
+<br/>
+
+```javascript
+<script>
+export default {
+  setup(_props, context) {
+    const onAddTodo = todo => {
+      context.emit("addTodo", todo);
+    };
+
+    return {
+      onAddTodo,
+    };
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 07.
