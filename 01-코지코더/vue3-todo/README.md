@@ -350,4 +350,240 @@ export default {
 
 
 
-## 09. 
+## 09. ``watchEffect``
+
+``Vue2`` 의 ``watch`` 처럼 대상의 값이 변경될 경우, ``callback (handler)`` 가 호출 됩니다.
+
+``Vue2`` 의 ``watch`` 와 다른점은, ``watchEffect`` 의 ``callback`` 에서 사용한 ``Reactive state`` 가 하나라도 변경될 경우, 호출되는 특징이 있습니다.
+
+그리고, 내부에서 사용 ``Reactive state`` 를 모두 감시하는 형태이므로, ``callback`` 으로 아무런 값을 받아오지 못합니다.
+
+즉, ``현재값`` 과 ``이전값`` 을 구분할 수 없고, ``watchEffect`` 의 ``callback`` 이 호출되는 시점에는, 이미 값이 변경된 후 입니다.
+
+<br/>
+
+``watchEffect`` 의 사용방법은 다음과 같습니다.
+
+```html
+<script>
+import { watchEffect, ref } from "vue";
+
+export default {
+  setup() {
+    const count = ref(0);
+
+    watchEffect(() => {
+      console.log("watch 동작 !!");
+
+      // Reactive state 를 사용
+      console.log(`count: ${count}`);
+    });
+
+    // watchEffect 의 callback 이 호출되는 시점
+    count.value = 3;
+  },
+};
+</script>
+```
+
+<br/>
+
+위의 예시에서는 ``count.value = 3`` 이 실행되면, ``watchEffect`` 가 동작하게 됩니다.
+
+<br/>
+
+만약 아래의 코드처럼 ``watchEffect`` 의 ``callback`` 에서 복수의 ``Reactive state`` 를 사용된다면, 이 중 어떠한 ``Reactive state`` 가 변경되어도, ``watchEffect`` 의 ``callback`` 이 실행 됩니다.
+
+<br/>
+
+```html
+<script>
+import { ref } from "vue";
+
+export default {
+  setup() {
+    const value1 = ref(1);
+    const value2 = ref(100);
+
+    watchEffect(() => {
+      console.log(`watchEffect 의 callback 실행`)
+      console.log(`value1.value: ${value1.value}`);
+      console.log(`value2.value: ${value2.value}`);
+    });
+
+    // 값이 변경된 후, watchEffect 의 callback 이 실행됨
+    value1.value = 3;
+
+    // 여기서도 watchEffect 의 callback 이 실행됨
+    value2.value = 300;
+  },
+};
+</script>
+```
+
+<br/>
+
+위의 예시에서는 ``ref()`` 만 사용하였지만, ``reactive()``, ``computed()``, ``props`` 의 변경에도 ``watchEffect`` 의 ``callback`` 이 실행 됩니다.
+
+즉, ``watchEffect`` 는 ``Reactive state (반응성 상태값)`` 의 변경마다 공통으로 실행할 로직에 유용합니다.
+
+
+
+<br/>
+
+
+
+## ``watch``
+
+``Vue2`` 와 유사하지만, 다른점은 복수의 대상을 대상으로 ``watch`` 의 ``callback (handler)`` 를 호출할 수 있습니다.
+
+아래의 코드는 단일 대상에 ``watch`` 를 사용한 예시 입니다.
+
+```html
+<script>
+import { watch, ref } from "vue";
+
+export default {
+  setup() {
+    const count = ref(0);
+
+    watch(count, (cur, prev) => {
+      console.log(`cur: ${cur}`);
+      console.log(`prev: ${prev}`);
+    });
+  },
+};
+</script>
+```
+
+<br/>
+
+``Vue3`` 의 ``watch`` 는 복수의 대상을 감지할 수 있으며, 감시 대상들을 ``배열에 넣어`` 넘겨주면 됩니다.
+
+```html
+<script>
+import { watch, ref } from "vue";
+
+export default {
+  setup() {
+    const value1 = ref(0);
+    count value2 = ref(100);
+
+    watch(
+      [value1, value2],
+      (cur, prev) => {
+        console.log(`cur: ${cur}`);
+        console.log(`prev: ${prev}`);
+      },
+    );
+
+    setTimeout(() => {
+      // watch 츼 callback 호출
+      value1.value = 3;
+    }, 1000);
+    // [3, 100]
+
+    setTimeout(() => {
+      // watch 의 callback 호출
+      value2.value = 300;
+    }, 2000);
+    // [3, 300]
+  },
+};
+</script>
+```
+
+<br/>
+
+지금까지 ``watch`` 는 ``Vue2`` 와 동일한 동작을 하였습니다.
+
+하지만, 객체를 대상으로 ``watch`` 를 사용하면, ``callback`` 의 인자인 ``prev (이전값)`` 이 ``현재값과 동일`` 한 상태인 버그가 존재 합니다.
+
+때문에, ``watch`` 의 감시대상으로 각각의 요소를 별도로 감시해야, 기존의 ``watch`` 처럼 사용할 수 있습니다.
+
+(만약 감시대상을 ``배열`` 로 사용하여 동작하지 않는다면, ``배열 반환 타입 Callback`` 으로 사용하면 동작 합니다.)
+
+(작성일: 2021. 12. 14)
+
+<br/>
+
+```html
+<script>
+import { watch, ref } from "vue";
+
+export default {
+  setup() {
+    const obj = ref({
+      a: 1,
+      b: "Hello",
+    });
+
+    watch(
+      [obj.a, obj.b],
+      (cur, prev) => {
+        console.log(cur)
+        console.log(pref)
+      },
+    );
+
+    setTimeout(() => {
+      obj.value.a = 3;
+
+      // 와치 동작
+      // cur: [{ a: 3, b: "Hello" }]
+      // pref: [{ a: 1, b: "Hello" }]
+    }, 1000);
+
+    setTimeout(() => {
+      obj.value.b = "🚀🚀🚀";
+
+      // 와치 동작
+      // cur: [{ a: 3, b: "Hello" }]
+      // pref: [{ a: 3, b: "🚀🚀🚀" }]
+    }, 2000);
+  }
+}
+</script>
+```
+
+<br/>
+
+```html
+<!-- 위의 코드에서 watch 가 동작하지 않을 경우 -->
+<script>
+import { ref, watch } from "vue";
+
+export default {
+  setup() {
+    const obj = ref({
+      a: 1,
+      b: "Hello",
+    });
+
+    watch(
+      () => [obj.a, obj.b],
+      (cur, prev) => {
+        console.log(cur)
+        console.log(pref)
+      },
+    );
+
+    setTimeout(() => {
+      obj.value.a = 3;
+
+      // 와치 동작
+      // cur: [{ a: 3, b: "Hello" }]
+      // pref: [{ a: 1, b: "Hello" }]
+    }, 1000);
+
+    setTimeout(() => {
+      obj.value.b = "🚀🚀🚀";
+
+      // 와치 동작
+      // cur: [{ a: 3, b: "Hello" }]
+      // pref: [{ a: 3, b: "🚀🚀🚀" }]
+    }, 2000);
+  }
+}
+</script>
+```
