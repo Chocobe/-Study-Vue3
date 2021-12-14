@@ -433,7 +433,7 @@ export default {
 
 
 
-## ``watch``
+## 10. ``watch``
 
 ``Vue2`` 와 유사하지만, 다른점은 복수의 대상을 대상으로 ``watch`` 의 ``callback (handler)`` 를 호출할 수 있습니다.
 
@@ -587,3 +587,88 @@ export default {
 }
 </script>
 ```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 11. ``Router``
+
+``Router`` 설정 파일은 ``Vue2`` 와 거의 유사합니다.
+
+달라진 점은 다음과 같습니다.
+* ``Router`` Factory Method 로 객체 생성
+* ``History Mode`` 설정을 ``string`` 이 아닌, Factory Method 로 생성한 객체로 설정
+
+<br/>
+
+아래의 코드는 ``router.js`` 설정 파일 예시 코드 입니다.
+
+```javascript
+// router.js
+
+import { createRouter, createWebHistory } from "vue-router";
+
+const routes = [
+  // Vue2 와 동일
+
+  {
+    path: "/",
+    name: "...",
+    component: () => import("@/..."),
+  },
+
+  // ...
+];
+
+const router = createRouter({
+  // History Mode 객체로 설정
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
+
+export default router;
+```
+
+
+<br/>
+
+
+``.vue`` 파일에서 ``Router`` 접근에도 ``SingleTon`` 을 통하여 접근하도록 변경 되었습니다.
+
+기존의 ``Router`` 접근방법과 변경된 접근방법을 비교하면 다음과 같습니다.
+
+|Vue2|Vue3|
+|---|---|
+|this.$route|useRoute()|
+|this.$router|useRouter()|
+
+<br/>
+
+아래의 코드는 ``Router`` 객체 접근 방법 예시코드 입니다.
+
+```html
+<script>
+import { useRoute, useRouter } from "vue-router";
+
+export default {
+  setup() {
+    // Vue2 의 this.$route 와 동일 합니다.
+    const $route = useRoute();
+    
+    // Vue2 의 this.$router 와 동일 합니다.
+    const $router = useRouter();
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 12.
