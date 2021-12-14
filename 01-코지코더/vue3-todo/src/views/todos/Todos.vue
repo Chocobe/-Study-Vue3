@@ -124,13 +124,13 @@ export default {
       }
     };
 
-    const toggleTodo = async idx => {
+    const toggleTodo = async (idx, completed) => {
+      console.log(`completed: ${completed}`);
+
       const todo = todos.value[idx];
 
       try {
         error.value = "";
-
-        const completed = !todo.completed;
         await axios.patch(`http://localhost:3000/todos/${todo.id}`, {
           completed,
         });
