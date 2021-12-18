@@ -964,4 +964,111 @@ export default {
 
 
 
-## 14.
+## 14. ``Teleport``
+
+``Teleport`` 는 컴포넌트의 ``<template>`` 중 일부를 다른 Element 의 자식요소에 Rendering 하는 방법 입니다.
+
+이는 ``Modal`` 컴포넌트의 경우가 좋은 예시 입니다.
+
+화면 전체를 Overlay 하는 ``Modal`` 의 경우, ``position: relative`` 인 부모요소를 기준으로 Style 이 반영되기 때문 입니다.
+
+<br/>
+
+화면의 일부분에 위치하는 컴포넌트 내에서 필요한 ``Modal`` 의 경우, ``position: relative`` 는 부적절한 위치를 가지게 됩니다.
+
+이 때, 화면 전체 Element 인 부모 요소로 ``Modal`` 의 Rendering 위치만 바꾸는데 사용하게 됩니다.
+
+<br/>
+
+``Teleport`` 의 특징은 다음과 같습니다.
+
+* 컴포넌트의 ``<template>`` 일부분을 다른 위치에 Rendering 시킬 수 있습니다.
+* ``Teleport`` 대상 요소는, 논리적 자식 컴포넌트를 그대로 유지 합니다.
+  * ``Props``
+  * ``Methods``
+  * ``EventListener``
+  * ``context.$parent``
+  * 그 외 vm Properties 전체
+
+<br/>
+
+``Teleport`` 를 사용하려면, 대상 컴포넌트를 ``<teleport>`` 의 body에 작성하면 됩니다.
+
+작성 형식은 다음과 같습니다.
+
+```html
+<template>
+  <h1>Teleport 예시 코드</h1>
+
+  <teleport to="#target">
+    <MyComponent />
+  </teleport>
+</template>
+```
+
+<br/>
+
+아래의 코드는 ``Teleport`` 를 사용한 예시 입니다.
+
+```html
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app" />
+    <div id="teleportTarget" />
+  </body>
+</html>
+```
+
+```html
+<!-- Parent.vue -->
+<template>
+  <h1>Teleport 예시 코드</h1>
+
+  <button @click="openModal">
+    모달 열기
+  </button>
+
+  <!-- <Element id="teleportTarget" /> 요소의 children 으로 Rendering 됩니다. -->
+  <teleport to="#teleportTarge">
+    <Modal v-if="isOpen" @close="onClose" @okay="onOkay" />
+  </teleport>
+</template>
+
+<script>
+import { ref } from "vue";
+import Modal from "@/components/Modal.vue";
+
+export default {
+  setup() {
+    const isOpen = ref(false);
+
+    const openModal = () => {
+      isOpen.value = true;
+    };
+
+    const closeModal = () => {
+      isOpen.value = false;
+    };
+
+    const onOkay = () => {
+      console.log("오케이 !!");
+    };
+
+    return {
+      isOpen,
+      openModal,
+      closeModal,
+      onOkay,
+    };
+  },
+  components: {
+    Modal,
+  },
+};
+</script>
+```
+
+
+
+## 15.

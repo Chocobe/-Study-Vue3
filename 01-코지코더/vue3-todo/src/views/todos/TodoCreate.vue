@@ -1,6 +1,7 @@
 <template>
-  <h1>To-Do 페이지</h1>
-  <TodoForm :isEditingType="true" />
+  <h1>Todo Create</h1>
+
+  <TodoForm />
 </template>
 
 <script>

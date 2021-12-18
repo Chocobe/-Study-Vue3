@@ -14,6 +14,11 @@ const router = createRouter({
       component: () => import("@/views/todos/Todos.vue"),
     },
     {
+      path: "/todos/create",
+      name: "todoCreate",
+      component: () => import("@/views/todos/TodoCreate.vue"),
+    },
+    {
       path: "/todos/:id",
       name: "todo",
       component: () => import("@/views/todos/_ID.vue"),

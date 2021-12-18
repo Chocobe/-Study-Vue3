@@ -1,6 +1,11 @@
 <template>
-  <div>
-    <h2>Todo List</h2>
+  <div style="opacity: 0.5">
+    <div class="d-flex justify-content-between mb-3">
+      <h2>Todo List</h2>
+      <button class="btn btn-primary" @click="moveToTodoCreate">
+        Create Todo
+      </button>
+    </div>
 
     <input
       class="form-control"
@@ -11,8 +16,6 @@
     />
 
     <hr />
-
-    <TodoSimpleForm @addTodo="addTodo" />
 
     <div style="color: red">{{ error }}</div>
 
@@ -59,14 +62,16 @@
     </nav>
   </div>
 
-  <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
+  <transition name="fade">
+    <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
+  </transition>
 </template>
 
 <script>
 import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 
-import TodoSimpleForm from "@/components/TodoSimpleForm.vue";
 import TodoList from "@/components/TodoList.vue";
 import Toast from "@/components/Toast.vue";
 
@@ -145,12 +150,11 @@ export default {
       }
     };
 
-    const deleteTodo = async idx => {
+    const deleteTodo = async todoId => {
       error.value = "";
-      const { id } = todos.value[idx];
 
       try {
-        await axios.delete(`http://localhost:3000/todos/${id}`);
+        await axios.delete(`http://localhost:3000/todos/${todoId}`);
         getTodos(1);
       } catch (err) {
         triggerToast("[삭제 실패] 네트워크가 원활하지 않습니다.", "danger");
@@ -172,6 +176,14 @@ export default {
       getTodos(1);
     };
 
+    const $router = useRouter();
+
+    const moveToTodoCreate = () => {
+      $router.push({
+        name: "todoCreate",
+      });
+    };
+
     return {
       todos,
       error,
@@ -186,6 +198,8 @@ export default {
 
       searchText,
 
+      moveToTodoCreate,
+
       showToast,
       toastMessage,
       toastAlertType,
@@ -193,11 +207,27 @@ export default {
   },
 
   components: {
-    TodoSimpleForm,
     TodoList,
     Toast,
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
