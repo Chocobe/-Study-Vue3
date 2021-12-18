@@ -1,7 +1,5 @@
 <template>
-  <router-view />
-
-  <div class="container">
+  <div>
     <h2>Todo List</h2>
 
     <input

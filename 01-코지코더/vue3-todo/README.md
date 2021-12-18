@@ -671,4 +671,116 @@ export default {
 
 
 
-## 12.
+## 12. ``Vue3`` 의 ``Lifecycle Hooks``
+
+``setup()`` 이 추가되면서, ``Vue2`` 의 ``created()`` 훅은 ``setup()`` 이 대체하게 되었습니다.
+
+아래는 ``Vue3`` 의 주요 ``Lifecycle Hooks`` 입니다.
+
+<br/>
+
+### 12-1. ``create`` 관련 Hook
+
+|역할|Hook Method|
+|---|---|
+|beforeCreate|``setup()``|
+|created|``setup()``|
+
+```html
+<script>
+export default {
+  setup() {
+    // beforeCreate 와 created 역할
+  },
+};
+</script>
+```
+
+<br/>
+
+### 12-2. ``mount`` 관련 Hook
+
+|역할|Hook Method|
+|---|---|
+|beforeMount|``onBeforeMount()``|
+|mounted|``onMounted()``|
+
+```html
+<script>
+import { onBeforeMount, onMounted } from "vue";
+
+export default {
+  setup() {
+    onBeforeMount(() => {
+      // mount 완료 전에 호출되는 Hook
+    });
+
+    onMounted(() => {
+      // mount 완료 후에 호출되는 Hook
+    });
+  },
+};
+</script>
+```
+
+<br/>
+
+### 12-4. ``update`` 관련 Hook
+
+|역할|Hook Method|
+|---|---|
+|beforeUpdate|``onBeforeUpdate()``|
+|updated|``onUpdated()``|
+
+```html
+<script>
+import { onBeforeUpdate, onUpdated } from "vue";
+
+export default {
+  setup() {
+    onBeforeUpdate(() => {
+      // update 전에 호출되는 Hook
+    });
+
+    onUpdated(() => {
+      // update 후에 호출되는 Hook
+    });
+  },
+};
+</script>
+```
+
+<br/>
+
+### 12-3. ``Unmount`` 관련 Hook
+
+|역할|Hook Method|
+|---|---|
+|beforeUnmount|``onBeforeUnmount()``|
+|unmounted|``onUnmounted()``|
+
+```html
+<script>
+import { onBeforeUnmount, onMounted } from "vue";
+
+export default {
+  setup() {
+    onBeforeUnmount(() => {
+      // unmount 전 (beforeDestroy) 에 호출되는 Hook
+    });
+
+    onUnmounted(() => {
+      // unmount 후 (destroyed) 에 호출되는 Hook
+    });
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 13.
