@@ -58,6 +58,8 @@
       </ul>
     </nav>
   </div>
+
+  <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
 </template>
 
 <script>
@@ -66,6 +68,9 @@ import axios from "axios";
 
 import TodoSimpleForm from "@/components/TodoSimpleForm.vue";
 import TodoList from "@/components/TodoList.vue";
+import Toast from "@/components/Toast.vue";
+
+import { useToast } from "@/composables/useToast";
 
 export default {
   setup() {
@@ -81,6 +86,9 @@ export default {
     });
 
     const searchText = ref("");
+
+    const { showToast, toastMessage, toastAlertType, triggerToast } =
+      useToast();
 
     const getTodos = async (page = currentPage.value) => {
       error.value = "";
@@ -100,8 +108,7 @@ export default {
         numberOfTodos.value = +res.headers["x-total-count"];
         todos.value = res.data;
       } catch (err) {
-        error.value = "todos 를 받아오지 못하였습니다..";
-        console.log(err);
+        triggerToast("todos 를 받아오지 못하였습니다..", "danger");
       }
     };
     getTodos();
@@ -117,8 +124,7 @@ export default {
 
         getTodos(1);
       } catch (err) {
-        error.value = "Something went wrong";
-        console.log(err);
+        triggerToast("Something went wrong", "danger");
       }
     };
 
@@ -135,8 +141,7 @@ export default {
 
         todo.completed = completed;
       } catch (err) {
-        error.value = "네트워크가 원활하지 않습니다.";
-        console.log(err);
+        triggerToast("네트워크가 원활하지 않습니다.", "danger");
       }
     };
 
@@ -148,22 +153,22 @@ export default {
         await axios.delete(`http://localhost:3000/todos/${id}`);
         getTodos(1);
       } catch (err) {
-        console.log(err);
+        triggerToast("[삭제 실패] 네트워크가 원활하지 않습니다.", "danger");
       }
     };
 
-    let timeoutId = undefined;
+    let timeoutID = undefined;
 
     watch(searchText, () => {
-      !isNaN(timeoutId) && clearTimeout(timeoutId);
+      !isNaN(timeoutID) && clearTimeout(timeoutID);
 
-      timeoutId = setTimeout(() => {
+      timeoutID = setTimeout(() => {
         getTodos(1);
       }, 2000);
     });
 
     const searchTodos = () => {
-      !isNaN(timeoutId) && clearTimeout(timeoutId);
+      !isNaN(timeoutID) && clearTimeout(timeoutID);
       getTodos(1);
     };
 
@@ -180,12 +185,17 @@ export default {
       searchTodos,
 
       searchText,
+
+      showToast,
+      toastMessage,
+      toastAlertType,
     };
   },
 
   components: {
     TodoSimpleForm,
     TodoList,
+    Toast,
   },
 };
 </script>

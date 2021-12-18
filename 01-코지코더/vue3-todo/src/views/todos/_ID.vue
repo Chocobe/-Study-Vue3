@@ -39,8 +39,11 @@
 </template>
 
 <script>
-import { ref, computed, onUnmounted } from "vue";
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
+import { useToast } from "@/composables/useToast";
+
 import axios from "axios";
 import _ from "lodash";
 
@@ -58,12 +61,10 @@ export default {
       return !_.isEqual(todo.value, originTodo.value);
     });
 
-    const showToast = ref(false);
-    const toastMessage = ref("");
-    const toastAlertType = ref("success");
+    const { showToast, toastMessage, toastAlertType, triggerToast } =
+      useToast();
 
     const loading = ref(true);
-    const timeoutID = ref(null);
 
     const getTodo = async () => {
       try {
@@ -83,19 +84,6 @@ export default {
     const toggleTodoStatus = () => {
       const { completed } = todo.value;
       todo.value.completed = !completed;
-    };
-
-    const triggerToast = (message, type = "success") => {
-      const { value } = showToast;
-
-      toastMessage.value = message;
-      toastAlertType.value = type;
-      showToast.value = !value;
-
-      timeoutID.value = setTimeout(() => {
-        showToast.value = false;
-        toastMessage.value = "";
-      }, 2000);
     };
 
     const saveTodo = async () => {
@@ -121,10 +109,6 @@ export default {
         name: "todos",
       });
     };
-
-    onUnmounted(() => {
-      clearTimeout(timeoutID);
-    });
 
     return {
       todo,

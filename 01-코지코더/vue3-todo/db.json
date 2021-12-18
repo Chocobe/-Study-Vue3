@@ -17,7 +17,7 @@
     },
     {
       "subject": "3333",
-      "completed": false,
+      "completed": true,
       "id": 6
     }
   ]

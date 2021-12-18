@@ -783,4 +783,185 @@ export default {
 
 
 
-## 13.
+## 13. ``Composable`` - ``setup()`` 을 문맥별로 분리하기
+
+자식 컴포넌트를 사용할 때, 필요한 ``State, Method, Hook`` 들이 있을 수 있습니다.
+
+이를 위해 ``setup()`` 에서 정의하여 사용하게 되는데, 복수의 자식 컴포넌트를 사용하게 된다면, ``setup()`` 에서 문맥을 파악하기가 어려워 집니다.
+
+<br/>
+
+때문에 ``setup()`` 에서 정의하여 사용할 각 ``State, Method, Hook`` 들을 문맥별로 분리하여 작성하고, ``import`` 하여 사용할 수 있는데, 이를 ``Vue3`` 에서는 ``Composable`` 이라고 합니다.
+
+<br/>
+
+``Composable`` 을 사용하는 목적을 정리하면 다음과 같습니다.
+
+* 특정 컴포넌트를 사용하기 위해 필요한 ``State, Method, Hook`` 들을 별도의 파일로 분리하여 작성할 수 있습니다.
+* 동일한 컴포넌트를 자식 컴포넌트로 사용하는 모든 부분에서, 중복으로 코드 작성을 하지 않게 됩니다. (``import``)
+* ``Composable`` 파일은 ``useXXX.js`` 형식으로 작성하며, ``setup()`` 과 같은 형식의 함수로 만듭니다.
+
+<br/>
+
+아래 코드는 ``Composable`` 을 적용한 예시 입니다.
+
+```html
+<!-- Toast.vue -->
+<!-- 자식 컴포넌트 -->
+
+<template>
+  <h1>Toast Component</h1>
+
+  <div>
+    메시지: {{ message }}
+  </div>
+
+  <div>
+    타입: {{ type }}
+  </div>
+</template>
+
+<script>
+import { ref, onUnmounted } from "vue";
+
+export default {
+  props: {
+    message: {
+      type: String,
+      default: "",
+    },
+
+    type: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>
+```
+
+<br/>
+
+```javascript
+// useToast.js
+// composable 파일
+
+import { ref, onUnmounted } from "vue";
+
+export const useToast = () => {
+  const isShow = ref(false);
+  const toastMessage = ref("");
+  const toastType = ref("");
+
+  let timeoutID = undefined;
+
+  const openToast = (message, type) {
+    toastMessage.value = message;
+    toastType.value = type;
+    isShow.value = true;
+
+    timeoutID = setTimeout(() => {
+      isShow.value = false;
+      toastMessage.value = "";
+      toastType.value = "";
+    }, 2000);
+  };
+
+  onUnmounted(() => {
+    timeoutID && clearTimeout(timeoutID);
+  });
+
+  return {
+    isShow,
+    toastMessage,
+    toastType,
+    openToast,
+  };
+};
+```
+
+<br/>
+
+```html
+<!-- MyParent.vue -->
+<!-- 부모 컴포넌트 1 -->
+
+<template>
+  <Toast :isShow="isShow" :message="toastMessage" :type="toastType" />
+
+  <button @click="openToast">열기</button>
+</template>
+
+<script>
+import Toast from "@/components/Toast.vue";
+import { useToast } from "@/composables/useToast";
+
+export default {
+  setup() {
+    const {
+      isShow,
+      toastMessage,
+      toastType,
+      openToast,
+    } = useToast();
+
+    return {
+      isShow,
+      toastMessage,
+      toastType,
+      openToast,
+    };
+  },
+
+  components: {
+    Toast,
+  },
+};
+</script>
+```
+
+<br/>
+
+```html
+<!-- YourParent.vue -->
+<!-- 부모 컴포넌트 2 -->
+
+<template>
+  <Toast v-if="isShow" :message="toastMessage" :type="toastType" />
+</template>
+
+<script>
+import Toast from "@/components/Toast.vue";
+import { useToast } from "@/composables/useToast";
+
+export default {
+  setup() {
+    const {
+      isShow,
+      toastMessage,
+      toastType,
+      openToast,
+    } = useToast();
+
+    return {
+      isShow,
+      toastMessage,
+      toastType,
+      openToast,
+    };
+  },
+
+  components: {
+    Toast,
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 14.
