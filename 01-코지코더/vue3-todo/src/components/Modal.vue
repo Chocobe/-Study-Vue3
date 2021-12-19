@@ -3,17 +3,19 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Delete Todo</h5>
+          <h5 class="modal-title">
+            <slot name="title"></slot>
+          </h5>
+
           <button type="button" class="btn-close" @click="onClose"></button>
         </div>
-        <div class="modal-body">삭제 하시겠습니까?</div>
+
+        <div class="modal-body">
+          <slot name="body"></slot>
+        </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="onClose">
-            Close
-          </button>
-          <button type="button" class="btn btn-danger" @click="onDelete">
-            삭제
-          </button>
+          <slot name="footer"></slot>
         </div>
       </div>
     </div>
@@ -27,13 +29,8 @@ export default {
       emit("close");
     };
 
-    const onDelete = () => {
-      emit("delete");
-    };
-
     return {
       onClose,
-      onDelete,
     };
   },
 };

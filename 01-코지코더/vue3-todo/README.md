@@ -1071,4 +1071,143 @@ export default {
 
 
 
-## 15.
+## 15. ``ScopedSlot`` (``Vue2`` 와 동일)
+
+``ScopedSlot`` 기능은 ``Vue2`` 와 동일 합니다.
+
+자주 사용하지 않는 기능이기에 복습겸 정리를 하였습니다.
+
+<br/>
+
+``Slot`` 은 컴포넌트의 특정 부분을 부모 컴포넌트에서 정의하여 사용할 수 있도록 공간을 만드는 방법 입니다.
+
+아래 코드는 ``Slot`` 을 가진 ``Children.vue`` 컴포넌트를 사용한 예시 입니다.
+
+```html
+<!-- Children.vue -->
+<template>
+  <slot>default slot</slot>
+  <slot name="body">body slot</slot>
+  <slot name="footer">footer slot</slot>
+</template>
+
+<!-- Parent.vue -->
+<template>
+  <Children>
+    기본 슬롯 정의
+
+    <template #body>바디 슬롯 정의</template>
+
+    <template #footer>푸터 슬롯 정의</template>
+  </Children>
+</template>
+
+<script>
+import Children from "@/components/Children.vue";
+
+export default {
+  components: {
+    Children,
+  },
+};
+</script>
+```
+
+<br/>
+
+위와 같은 ``Slot`` 기능을 살펴보면 다음과 같은 과정을 알 수 있습니다.
+
+* ``Parent.vue`` 에서 ``Children.vue`` 를 자식 컴포넌트로 사용 합니다.
+* ``Parent.vue`` 에서 ``Children.vue`` 의 각 ``Slot`` 에 ``<template>`` 을 제공 합니다.
+* ``Children.vue`` 는 ``Slot`` 으로 받은 요소를 자신의 ``Slot`` 영역에 렌더링 합니다.
+
+<br/>
+
+``Slot`` 은 ``부모 => 자식`` 방향으로 ``<template>`` 을 전달(주입) 하는 방법 이라고 생각할 수 있습니다.
+
+여기서 생각해 볼 수 있는 것은, ``자식`` 에 있는 데이터를 기준으로 ``Slot`` 을 넘겨주고 싶을 경우 입니다.
+
+이 때 사용할 수 있는 방법이 ``ScopedSlot`` 입니다.
+
+<br/>
+
+``ScopedSlot`` 은 자식 컴포넌트에서 정의한 ``Slot`` 을 대상으로 자신의 데이터를 부모 컴포넌트로 넘겨주는 방법 입니다.
+
+즉, 부모 컴포넌트에서 ``Slot`` 을 지정해 주지만, 여기서 넘겨주는 ``<template>`` 은, 자식 컴포넌트의 데이터로 사용할 수 있게 해줍니다.
+
+자식 컴포넌트의 ``Slot`` 으로 넘겨주는 데이터 (``ScopedSlot``) 은 부모 컴포넌트로 넘겨줄 때, 객체 하나에 묶어서 넘겨줍니다.
+
+<br/>
+
+아래의 코드는 ``ScopedSlot`` 을 사용한 예시 입니다.
+
+```html
+<!-- Children.vue -->
+<template>
+  <slot name="default" :title="title">
+    Default Slot
+  </slot>
+
+  <slot name="body" :id="id" :subject="mySubject">
+    Body Slot
+  </slot>
+
+  <slot name="footer">
+    Footer Slot
+  </slot>
+</template>
+
+<script>
+import { ref } from "vue";
+
+export default {
+  props: {
+    title: {
+      title: String,
+      default: "",
+    },
+  },
+
+  setup() {
+    const id = ref(3);
+    const mySubject = ref("It's My Subject");
+
+    return {
+      id,
+      mySubject,
+    };
+  },
+};
+</script>
+```
+
+<br/>
+
+```html
+<!-- Parent.vue -->
+
+<template>
+  <Children :title="🐫🐫🐫">
+    <template #default="scopedSlotData">
+      {{ scopedSlotData.title }}
+    </template>
+
+    <template #body="{ id, mySubject }">
+      <div>아이디: {{ id }}</div>
+      <div>서브젝트: {{ mySubject }}</div>
+    </template>
+
+    <template #footer>
+      여기는 푸터 입니다.
+    </template>
+  </Children>
+</template>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 16. 
