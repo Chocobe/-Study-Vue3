@@ -44,10 +44,6 @@
       </button>
     </div>
   </form>
-
-  <transition name="fade">
-    <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
-  </transition>
 </template>
 
 <script>
@@ -56,10 +52,9 @@ import { useRoute, useRouter } from "vue-router";
 
 import { useToast } from "@/composables/useToast";
 
-import axios from "axios";
+import myAxios from "@/myAxios";
 import _ from "lodash";
 
-import Toast from "@/components/Toast.vue";
 import Input from "@/components/Input.vue";
 
 export default {
@@ -94,7 +89,7 @@ export default {
       try {
         loading.value = true;
 
-        const response = await axios.get(`http://localhost:3000/todos`, {
+        const response = await myAxios.get(`todos`, {
           params: route.params,
         });
 
@@ -132,16 +127,13 @@ export default {
         let resultMessage = "";
 
         if (props.isEditingType) {
-          response = await axios.put(
-            `http://localhost:3000/todos/${todo.value.id}`,
-            payload,
-          );
+          response = await myAxios.put(`todos/${todo.value.id}`, payload);
 
           resultMessage = "수정 완료";
           originTodo.value = { ...response.data };
           todo.value = { ...response.data };
         } else {
-          await axios.post("http://localhost:3000/todos", payload);
+          await myAxios.post("todos", payload);
 
           resultMessage = "생성 완료";
           todo.value = {
@@ -152,6 +144,12 @@ export default {
         }
 
         triggerToast(resultMessage, "success");
+
+        if (!props.isEditingType) {
+          router.push({
+            name: "todos",
+          });
+        }
       } catch (_e) {
         triggerToast("[저장 실패] 잠시 후 다시 실행해 주세요", "danger");
       }
@@ -178,27 +176,11 @@ export default {
   },
 
   components: {
-    Toast,
     Input,
   },
 };
 </script>
 
 <style scoped lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-  transform: translate(0);
-}
+//
 </style>

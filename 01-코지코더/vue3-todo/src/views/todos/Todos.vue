@@ -29,51 +29,22 @@
 
     <hr />
 
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li v-if="currentPage !== 1" class="page-item">
-          <a
-            class="page-link"
-            @click.prevent="getTodos(currentPage - 1)"
-            style="cursor: pointer"
-          >
-            Previous
-          </a>
-        </li>
-        <li
-          v-for="page in numberOfPages"
-          :key="page"
-          class="page-item"
-          :class="currentPage === page ? 'active' : ''"
-          style="cursor: pointer"
-        >
-          <a class="page-link" @click.prevent="getTodos(page)">{{ page }}</a>
-        </li>
-        <li v-if="numberOfPages !== currentPage" class="page-item">
-          <a
-            class="page-link"
-            @click.prevent="getTodos(currentPage + 1)"
-            style="cursor: pointer"
-          >
-            Next
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <Pagination
+      v-if="todos.length"
+      :numberOfPages="numberOfPages"
+      :currentPage="currentPage"
+      @click="getTodos"
+    />
   </div>
-
-  <transition name="fade">
-    <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
-  </transition>
 </template>
 
 <script>
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import myAxios from "@/myAxios";
 
 import TodoList from "@/components/TodoList.vue";
-import Toast from "@/components/Toast.vue";
+import Pagination from "@/components/Pagination.vue";
 
 import { useToast } from "@/composables/useToast";
 
@@ -100,7 +71,7 @@ export default {
       currentPage.value = page;
 
       try {
-        const res = await axios.get("http://localhost:3000/todos", {
+        const res = await myAxios.get("todos", {
           params: {
             subject_like: searchText.value,
             _sort: "id",
@@ -122,7 +93,7 @@ export default {
       error.value = "";
 
       try {
-        await axios.post("http://localhost:3000/todos", {
+        await myAxios.post("todos", {
           subject: todo.subject,
           completed: todo.completed,
         });
@@ -140,7 +111,7 @@ export default {
 
       try {
         error.value = "";
-        await axios.patch(`http://localhost:3000/todos/${todo.id}`, {
+        await myAxios.patch(`todos/${todo.id}`, {
           completed,
         });
 
@@ -154,7 +125,7 @@ export default {
       error.value = "";
 
       try {
-        await axios.delete(`http://localhost:3000/todos/${todoId}`);
+        await myAxios.delete(`todos/${todoId}`);
         getTodos(1);
       } catch (err) {
         triggerToast("[삭제 실패] 네트워크가 원활하지 않습니다.", "danger");
@@ -208,26 +179,11 @@ export default {
 
   components: {
     TodoList,
-    Toast,
+    Pagination,
   },
 };
 </script>
 
 <style scoped lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
+//
 </style>

@@ -1,8 +1,8 @@
 import { createStore } from "vuex";
+import toast from "@/store/modules/toastModule";
 
 export default createStore({
-  state: {},
-  mutations: {},
-  actions: {},
-  modules: {},
+  modules: {
+    toast,
+  },
 });
