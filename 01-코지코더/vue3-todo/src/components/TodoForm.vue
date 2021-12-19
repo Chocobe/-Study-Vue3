@@ -4,13 +4,11 @@
   <form v-else @submit.prevent="saveTodo">
     <div class="row">
       <div class="col-6">
-        <label>Subject</label>
-
-        <input v-model="todo.subject" type="text" class="form-control" />
-
-        <div v-if="subjectError" class="text-red">
-          {{ subjectError }}
-        </div>
+        <Input
+          v-model:subject="todo.subject"
+          label="서브젝트"
+          :error="subjectError"
+        />
       </div>
 
       <div v-if="isEditingType" class="col-6">
@@ -66,6 +64,7 @@ import axios from "axios";
 import _ from "lodash";
 
 import Toast from "@/components/Toast.vue";
+import Input from "@/components/Input.vue";
 
 export default {
   props: {
@@ -184,15 +183,12 @@ export default {
 
   components: {
     Toast,
+    Input,
   },
 };
 </script>
 
 <style scoped lang="scss">
-.text-red {
-  color: #ff1493;
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;

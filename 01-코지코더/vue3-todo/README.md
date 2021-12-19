@@ -1210,4 +1210,106 @@ export default {
 
 
 
-## 16. 
+## 16. ``v-model``
+
+``v-model`` 은 양방향 바인딩을 위한 방법입니다.
+
+``Vue 2.x`` 에서도 있지만, 컴포넌트당 오직 하나만 사용할 수 있었습니다.
+
+이러한 불편한 점을 보완하기 위해 ``.sync`` 기능이 추가된 상태 입니다.
+
+<br/>
+
+``Vue 3`` 에서는 이러한 ``v-model`` 을 복수로 사용할 수 있도록 변경 되었습니다.
+
+그리고 ``.sync`` 키워드는 삭제 되었습니다.
+
+<br/>
+
+아래는 ``Vue3`` 에서 변경된 ``v-model`` 기능 입니다.
+
+||Vue 2.x|Vue 3.x|
+|---|---|---|
+|``v-model`` 사용 개수|오직 1개|복수 사용가능|
+|``.sync`` 키워드|사용 가능|사용 불가 (삭제됨)|
+|이벤트 명|``update:이벤트명`` 을 사용해야 ``.sync`` 사용 가능|``update:이벤트명`` 을 사용해야 ``v-model`` 사용 가능|
+|기본 ``Prop명``|``value``|``modelValue``|
+|기본 ``이벤트명``|``input``|``update:modelValue``|
+
+<br/>
+
+아래의 코드는 ``Vue3`` 의 ``v-model`` 사용 예시 입니다.
+
+```html
+<!-- Children.vue -->
+
+<template>
+  <input type="text" :value="myTitle" @input="emitMyTitle">
+  <input type="text" :value="mySubject" @input="emitMySubject">
+</template>
+
+<script>
+export default {
+  props: {
+    myTitle: {
+      type: String,
+      default: "",
+    },
+
+    mySubject: {
+      type: String,
+      default: "",
+    },
+  },
+
+  setup(_props, { emit }) {
+    const emitMyTitle = e => {
+      emit("update:myTitle", e.target.value);
+    };
+
+    const emitMySubject = e => {
+      emit("update:mySubject", e.target.value);
+    };
+
+    return {
+      emitMyTitle,
+      emitMySubject,
+    };
+  },
+};
+</script>
+```
+
+<br/>
+
+```html
+<!-- Parent.vue -->
+
+<template>
+  <Children v-model:myTitle="title" v-model:mySubject="subject" />
+</template>
+
+<script>
+import { ref } from "vue";
+
+export default {
+  setup() {
+    const title = ref("제목");
+    const subject = ref("내용");
+
+    return {
+      title,
+      subject,
+    };
+  },
+};
+</script>
+```
+
+
+
+<br/><hr/><br/>
+
+
+
+## 17. 
