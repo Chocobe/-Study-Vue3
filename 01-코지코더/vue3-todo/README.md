@@ -293,6 +293,27 @@ export default {
 
 위와 같이 ``emits`` 속성을 정의하면, 부모 컴포넌트에서 사용할 때, 자식 컴포넌트에서 발생되는 ``이벤트 목록`` 을 파악할 수 있게 됩니다.
 
+<br/>
+
+``Vue 3``에서 ``emit()`` 사용하기 위한 다른 방법도 있습니다.
+
+``Vue 2`` 에서 사용했던 ``this.$emit()`` 처럼, 컴포넌트 객체를 통해서 ``emit()`` 메서드를 사용하는 방법도 지원하고 있습니다.
+
+<br/>
+
+``Vue 3`` 에서 컴포넌트 자신의 객체에 접근하는 방법은 다음과 같습니다.
+
+```javascript
+import { getCurrentInstance } from "vue";
+
+export default {
+  setup() {
+    const { emit } = getCurrentInstance();
+    emit("myInput", "전달값");
+  },
+};
+```
+
 
 
 <br/><hr/><br/>

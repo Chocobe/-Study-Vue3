@@ -4,11 +4,7 @@
   <form v-else @submit.prevent="saveTodo">
     <div class="row">
       <div class="col-6">
-        <Input
-          v-model:subject="todo.subject"
-          label="서브젝트"
-          :error="subjectError"
-        />
+        <Input v-model="todo.subject" label="서브젝트" :error="subjectError" />
       </div>
 
       <div v-if="isEditingType" class="col-6">

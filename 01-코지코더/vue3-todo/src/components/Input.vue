@@ -2,7 +2,12 @@
   <div class="form-group">
     <label>{{ label }}</label>
 
-    <input :value="subject" @input="onInput" type="text" class="form-control" />
+    <input
+      :value="modelValue"
+      @input="onInput"
+      type="text"
+      class="form-control"
+    />
 
     <div v-if="error" class="text-red">
       {{ error }}
@@ -23,7 +28,7 @@ export default {
       default: "",
     },
 
-    subject: {
+    modelValue: {
       type: String,
       default: "",
     },
@@ -31,7 +36,7 @@ export default {
 
   setup(_props, { emit }) {
     const onInput = ({ target: { value } }) => {
-      emit("update:subject", value);
+      emit("update:modelValue", value);
     };
 
     return {
