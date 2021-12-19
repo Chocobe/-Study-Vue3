@@ -1,10 +1,19 @@
 <template>
   <h1 class="home">Home Page</h1>
+  <div>count: {{ count }}</div>
+
+  <button @click="increaseCount">카운트 증가</button>
 </template>
 
 <script>
+import { useCount } from "@/composables/useCount";
+
 export default {
-  //
+  setup() {
+    const { count } = useCount();
+
+    return { count };
+  },
 };
 </script>
 

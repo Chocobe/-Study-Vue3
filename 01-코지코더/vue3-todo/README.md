@@ -1333,4 +1333,72 @@ export default {
 
 
 
-## 17. 
+## 17. ``toRefs`` 와 ``toRef``
+
+``reactive`` 로 생성한 객체는 ``방응성`` 을 가집니다.
+
+여기서 주의할 점은, ``reactive`` 객체의 개별 ``Property`` 들에는 반응성이 부여되지 않는다는 것입니다.
+
+<br/>
+
+이를 위해, ``reactive`` 로 생성한 객체의 개별 ``Property`` 들에 반응성을 부여하는 함수를 제공합니다.
+
+* ``toRef(대상객체, "Property명")`` : 대상객체의 ``Property`` 하나에 반응성을 부여 합니다.
+* ``toRefs(대상객체)`` : 대상객체의 모든 ``Property`` 들을 개별로 반응성을 부여 합니다.
+
+<br/>
+
+정리하면, ``reactive`` 로 생성한 객체의 개별 ``Property`` 에는 반응성이 존재하지 않지만, ``toRef()`` 또는 ``toRefs()`` 를 사용하면, Property 개별로 반응성을 부여할 수 있습니다.
+
+<br/>
+
+```javascript
+// count.js
+
+import { reactive } from "vue";
+
+export const useCount = () => {
+  const countObj = reactive({
+    prevCount: 0,
+    count: 0,
+  });
+
+  return {
+    countObj,
+  };
+};
+```
+
+<br/>
+
+```html
+<script>
+import { toRefs } from "vue";
+import { useCount } from "useCount";
+
+export default {
+  setup() {
+    const { countObj } = useCount();
+
+    // Property 개별로 반응성 부여
+    const { prefCount, count } = toRefs(countObj);
+
+    // ref() 로 생성한 객체처럼 ``.value`` 로 참조
+    console.log(prefCount.value);
+    console.log(count.value);
+
+    return {
+      prevCount,
+      count,
+    };
+  },
+};
+</script>
+```
+
+
+<br/><hr/><br/>
+
+
+
+## 18. 
